@@ -502,11 +502,19 @@ $(CPPUTEST_OBJS_DIR)/%.o: %.cpp
 	@echo compiling $(notdir $<)
 	$(SILENCE)mkdir -p $(dir $@)
 	$(SILENCE)$(COMPILE.cpp) $(DEP_FLAGS) $(OUTPUT_OPTION) $<
+	@if [ -e $(*D)/object.mangle ]; then \
+		echo "Mangling $(*F) objects"; \
+		objcopy --redefine-syms=$(*D)/object.mangle $(CPPUTEST_OBJS_DIR)/$(*D)/$(*F).o; \
+	fi
 
 $(CPPUTEST_OBJS_DIR)/%.o: %.c
 	@echo compiling $(notdir $<)
 	$(SILENCE)mkdir -p $(dir $@)
 	$(SILENCE)$(COMPILE.c) $(DEP_FLAGS) $(OUTPUT_OPTION) $<
+	@if [ -e $(*D)/object.mangle ]; then \
+		echo "Mangling $(*F) objects"; \
+		objcopy --redefine-syms=$(*D)/object.mangle $(CPPUTEST_OBJS_DIR)/$(*D)/$(*F).o; \
+	fi
 
 ifneq "$(MAKECMDGOALS)" "clean"
 -include $(DEP_FILES)
